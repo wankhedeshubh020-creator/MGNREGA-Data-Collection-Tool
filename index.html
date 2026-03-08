@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shubham Household Survey – Data Entry</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #f5f2eb;
+    --surface: #fff;
+    --border: #d4c9b0;
+    --accent: #2d6a4f;
+    --accent2: #b5451b;
+    --text: #1a1a1a;
+    --muted: #6b6355;
+    --tag-bg: #e8f5e9;
+    --row-alt: #faf8f4;
+    --danger: #c0392b;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  header span {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: #1a3a2a;
+    padding: 20px 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 6px 16px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #5a8a6a;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 12px;
+  }
+
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: #a8c8b0;
+    text-decoration: none;
+    font-size: 0.82rem;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .sidebar a:hover, .sidebar a.active {
+    color: white;
+    background: rgba(255,255,255,0.07);
+    border-left-color: #74c69d;
+  }
+
+  .sidebar a.active { color: #74c69d; font-weight: 500; }
+
+  .sidebar a .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.1);
+    padding: 1px 6px;
+    border-radius: 3px;
+    min-width: 22px;
+    text-align: center;
+  }
+
+  /* Main */
+  .main {
+    padding: 32px;
+    max-width: 960px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 28px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 14px;
+  }
+
+  .section-header h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .section-header p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* Field groups */
+  .field-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .cols-1 { grid-template-columns: 1fr; }
+
+  @media (max-width: 700px) {
+    .cols-3, .cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .cols-2 { grid-template-columns: 1fr; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .field label {
+    font-size: 0.73rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .field input, .field select, .field textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.88rem;
+    background: var(--surface);
+    color: var(--text);
+    transition: border 0.15s;
+    width: 100%;
+  }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  }
+
+  .field textarea { min-height: 80px; resize: vertical; }
+
+  /* Radio/checkbox groups */
+  .radio-group, .check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .radio-group label, .check-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  /* Repeating table rows */
+  .repeat-container {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .repeat-header {
+    background: var(--accent);
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+  }
+
+  .repeat-item {
+    border-bottom: 1px solid var(--border);
+    padding: 16px;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .repeat-item:nth-child(even) { background: var(--row-alt); }
+
+  .repeat-item .item-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-add {
+    background: var(--tag-bg);
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+  }
+
+  .btn-add:hover { background: var(--accent); color: white; }
+
+  .btn-remove {
+    background: #fde8e8;
+    color: var(--danger);
+    border: 1.5px solid #f5a9a9;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  .btn-remove:hover { background: var(--danger); color: white; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    padding: 11px 24px;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary:hover { background: #1e4d38; }
+
+  .btn-export {
+    background: var(--accent2);
+    color: white;
+    padding: 11px 24px;
+    font-size: 0.9rem;
+  }
+
+  .btn-export:hover { background: #8b2f10; }
+
+  .repeat-footer {
+    padding: 12px 16px;
+    background: #f9f7f2;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Section divider */
+  .subsection {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    margin: 24px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  /* Nav footer */
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Assets grid */
+  .asset-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    background: var(--surface);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+
+  .asset-table th {
+    background: var(--accent);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .asset-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .asset-table tr:nth-child(even) td { background: var(--row-alt); }
+
+  .asset-table input {
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 0.83rem;
+    width: 100%;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .asset-table input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .asset-cat {
+    background: #e8f5e9 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 7px 12px !important;
+  }
+
+  /* MGNREGA monthly table */
+  .month-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .month-table th {
+    background: var(--accent);
+    color: white;
+    padding: 10px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .month-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .month-table tr:nth-child(even) td { background: var(--row-alt); }
+
+  .month-table td:first-child {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .month-table input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 0.83rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .month-table input:focus { outline: none; border-color: var(--accent); }
+
+  .yes-no { display: flex; gap: 8px; align-items: center; }
+  .yes-no select {
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 0.82rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: white;
+  }
+
+  .loan-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.82rem;
+    background: var(--surface);
+    margin-bottom: 20px;
+  }
+
+  .loan-head {
+    background: var(--accent);
+    color: white;
+    padding: 10px 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .loan-label {
+    background: var(--row-alt);
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .loan-cell {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .loan-cell input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 5px 6px;
+    font-size: 0.8rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .loan-cell input:focus { outline: none; border-color: var(--accent); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: var(--shadow);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  .hh-id-bar {
+    background: #e8f5e9;
+    border: 1.5px solid #74c69d;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #74c69d;
+    transition: width 0.4s;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 SHUBHAM HOUSEHOLD SURVEY — DATA ENTRY</h1>
+  <span id="hhLabel">No household loaded</span>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Navigation</div>
+    <a onclick="goSection('s0')" id="nav-s0" class="active"><span class="num">0</span> General Info</a>
+    <a onclick="goSection('s1')" id="nav-s1"><span class="num">1</span> Family Members</a>
+    <a onclick="goSection('s2')" id="nav-s2"><span class="num">2</span> Agriculture Income</a>
+    <a onclick="goSection('s3')" id="nav-s3"><span class="num">3</span> Non-Agri Income</a>
+    <a onclick="goSection('s4')" id="nav-s4"><span class="num">4</span> Land Details</a>
+    <a onclick="goSection('s5')" id="nav-s5"><span class="num">5</span> Assets</a>
+    <a onclick="goSection('s6')" id="nav-s6"><span class="num">6</span> Loans</a>
+    <a onclick="goSection('s7')" id="nav-s7"><span class="num">7</span> MGNREGA Awareness</a>
+    <a onclick="goSection('s8')" id="nav-s8"><span class="num">8</span> Employment Status</a>
+    <a onclick="goSection('s9')" id="nav-s9"><span class="num">9</span> Wages & Digital</a>
+    <a onclick="goSection('s10')" id="nav-s10"><span class="num">10</span> Worksite & Social</a>
+    <a onclick="goSection('s11')" id="nav-s11"><span class="num">11</span> Women & Grievances</a>
+    <a onclick="goSection('s12')" id="nav-s12"><span class="num">12</span> Perceptions</a>
+    <div class="sidebar-section">Actions</div>
+    <a onclick="saveHousehold()">💾 Save Household</a>
+    <a onclick="newHousehold()">➕ New Household</a>
+    <a onclick="exportData()">📤 Export All Data</a>
+    <a onclick="showLoaded()">📂 Loaded Records</a>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main">
+
+    <!-- Section 0: General Info -->
+    <div id="s0" class="section active">
+      <div class="section-header">
+        <h2>General Information</h2>
+        <p>Basic household and head of family details</p>
+      </div>
+
+      <div class="hh-id-bar">
+        🏠 Household ID: <strong id="hhIdDisplay">—</strong>
+        &nbsp;|&nbsp;
+        📋 Job Card No: <input id="job_card_no" placeholder="Enter Job Card Number" style="border:1.5px solid #74c69d;border-radius:5px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--accent);background:#f0faf4;width:180px;">
+        &nbsp;|&nbsp; Fill all fields then save at the end.
+      </div>
+
+      <div class="field-grid cols-3">
+        <div class="field"><label>Village</label>
+          <select id="village">
+            <option value="">— Select Village —</option>
+            <option>Muradpur</option>
+            <option>Khairao</option>
+            <option>Palaskhed</option>
+            <option>Pimpalgaon Unda</option>
+            <option>Bhalegaon</option>
+            <option>Shendurjan</option>
+          </select>
+        </div>
+        <div class="field"><label>Block</label>
+          <select id="block">
+            <option value="">— Select Block —</option>
+            <option>Chikhali</option>
+            <option>Mehkar</option>
+            <option>Sindkhed Raja</option>
+          </select>
+        </div>
+        <div class="field"><label>District</label><input id="district" placeholder="District name"></div>
+        <div class="field"><label>Date of Survey</label><input id="survey_date" type="date"></div>
+        <div class="field"><label>Native Place</label><input id="native_place" placeholder="Native place"></div>
+        <div class="field"><label>Year of Migration</label><input id="year_migration" type="number" placeholder="e.g. 2010"></div>
+      </div>
+
+      <div class="subsection">Head of Family</div>
+      <div class="field-grid cols-3">
+        <div class="field"><label>Name of Family Head</label><input id="head_name" placeholder="Full name"></div>
+        <div class="field"><label>Sex</label>
+          <select id="head_sex"><option value="">— Select —</option><option>Male</option><option>Female</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>Age</label><input id="head_age" type="number" placeholder="Age"></div>
+        <div class="field"><label>Address</label><input id="address" placeholder="Full address"></div>
+        <div class="field"><label>Occupation</label><input id="head_occupation" placeholder="Occupation"></div>
+        <div class="field"><label>Religion</label><input id="religion" placeholder="Religion"></div>
+        <div class="field"><label>Caste</label><input id="caste" placeholder="Caste / Category"></div>
+      </div>
+
+      <div class="field-grid cols-1">
+        <div class="field"><label>Reasons for Migration</label><textarea id="reasons_migration" placeholder="Describe reasons for migration..."></textarea></div>
+      </div>
+
+      <div class="nav-footer">
+        <span></span>
+        <button class="btn btn-primary" onclick="goSection('s1')">Next: Family Members →</button>
+      </div>
+    </div>
+
+    <!-- Section 1: Family Members -->
+    <div id="s1" class="section">
+      <div class="section-header">
+        <h2>Family Members</h2>
+        <p>Add all members of the household. Each person gets their own row.</p>
+      </div>
+
+      <div class="repeat-container" id="familyMembersContainer">
+        <div class="repeat-header">
+          <span>FAMILY MEMBERS</span>
+          <span id="fmCount">0 members</span>
+        </div>
+        <div id="familyMembersList"></div>
+        <div class="repeat-footer">
+          <button class="btn btn-add" onclick="addFamilyMember()">+ Add Family Member</button>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s0')">← General Info</button>
+        <button class="btn btn-primary" onclick="goSection('s2')">Next: Agriculture Income →</button>
+      </div>
+    </div>
+
+    <!-- Section 2: Agriculture Income -->
+    <div id="s2" class="section">
+      <div class="section-header">
+        <h2>Agriculture Income (Last One Year)</h2>
+        <p>Record income from agriculture wages and work for each family member.</p>
+      </div>
+
+      <div class="repeat-container">
+        <div class="repeat-header"><span>AGRICULTURE INCOME ENTRIES</span><span id="aiCount">0 entries</span></div>
+        <div id="agriIncomeList"></div>
+        <div class="repeat-footer">
+          <button class="btn btn-add" onclick="addAgriIncome()">+ Add Entry</button>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s1')">← Family Members</button>
+        <button class="btn btn-primary" onclick="goSection('s3')">Next: Non-Agri Income →</button>
+      </div>
+    </div>
+
+    <!-- Section 3: Non-Agriculture Income -->
+    <div id="s3" class="section">
+      <div class="section-header">
+        <h2>Non-Agriculture Income (Last Year)</h2>
+        <p>Record all non-farm income sources: labour, business, livestock, remittance, social security.</p>
+      </div>
+
+      <div class="subsection">Non-Agriculture Labour Income</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>LABOUR INCOME</span><span id="labourCount">0</span></div>
+        <div id="labourIncomeList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addLabourIncome()">+ Add Labour Entry</button></div>
+      </div>
+
+      <div class="subsection">Livestock Income</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>LIVESTOCK</span><span id="livestockCount">0</span></div>
+        <div id="livestockList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addLivestock()">+ Add Animal</button></div>
+      </div>
+
+      <div class="subsection">Social Security / Scheme Benefits</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>SOCIAL SECURITY SCHEMES</span><span id="schemeCount">0</span></div>
+        <div id="schemeList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addScheme()">+ Add Scheme</button></div>
+      </div>
+
+      <div class="subsection">Remittance</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>REMITTANCE</span><span id="remitCount">0</span></div>
+        <div id="remitList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addRemit()">+ Add Remittance</button></div>
+      </div>
+
+      <div class="subsection">Business Income</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>BUSINESS</span><span id="bizCount">0</span></div>
+        <div id="bizList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addBiz()">+ Add Business</button></div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s2')">← Agri Income</button>
+        <button class="btn btn-primary" onclick="goSection('s4')">Next: Land →</button>
+      </div>
+    </div>
+
+    <!-- Section 4: Land -->
+    <div id="s4" class="section">
+      <div class="section-header">
+        <h2>Land Details</h2>
+        <p>Current land holdings and transactions over the last 20 years.</p>
+      </div>
+
+      <div class="subsection">Current Land Holdings</div>
+      <table class="asset-table" style="margin-bottom:20px">
+        <thead><tr>
+          <th>Land Type</th><th>Owned &amp; Tilled (Area)</th><th>Owned &amp; Tilled (₹)</th>
+          <th>Taken for Tilling</th><th>Taken as Mortgage</th>
+          <th>Given for Tilling</th><th>Given for Mortgage</th><th>Source of Water</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="asset-cat">Irrigated Land</td>
+            <td><input id="land_irr_area"></td><td><input id="land_irr_val"></td>
+            <td><input id="land_irr_taken_till"></td><td><input id="land_irr_taken_mort"></td>
+            <td><input id="land_irr_give_till"></td><td><input id="land_irr_give_mort"></td>
+            <td><input id="land_irr_water"></td>
+          </tr>
+          <tr>
+            <td class="asset-cat">Rainfed Land</td>
+            <td><input id="land_rain_area"></td><td><input id="land_rain_val"></td>
+            <td><input id="land_rain_taken_till"></td><td><input id="land_rain_taken_mort"></td>
+            <td><input id="land_rain_give_till"></td><td><input id="land_rain_give_mort"></td>
+            <td><input id="land_rain_water"></td>
+          </tr>
+          <tr>
+            <td class="asset-cat">Fallow Land</td>
+            <td><input id="land_fall_area"></td><td><input id="land_fall_val"></td>
+            <td><input id="land_fall_taken_till"></td><td><input id="land_fall_taken_mort"></td>
+            <td><input id="land_fall_give_till"></td><td><input id="land_fall_give_mort"></td>
+            <td><input id="land_fall_water"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="subsection">Land Buying Transactions (Last 20 Years)</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>LAND PURCHASES</span><span id="landBuyCount">0</span></div>
+        <div id="landBuyList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addLandBuy()">+ Add Purchase</button></div>
+      </div>
+
+      <div class="subsection">Land Selling Transactions (Last 20 Years)</div>
+      <div class="repeat-container">
+        <div class="repeat-header"><span>LAND SALES</span><span id="landSellCount">0</span></div>
+        <div id="landSellList"></div>
+        <div class="repeat-footer"><button class="btn btn-add" onclick="addLandSell()">+ Add Sale</button></div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s3')">← Non-Agri Income</button>
+        <button class="btn btn-primary" onclick="goSection('s5')">Next: Assets →</button>
+      </div>
+    </div>
+
+    <!-- Section 5: Assets -->
+    <div id="s5" class="section">
+      <div class="section-header">
+        <h2>Total Assets of Family</h2>
+        <p>Enter count and current price for each asset owned. Leave blank if not owned.</p>
+      </div>
+
+      <table class="asset-table" id="assetTable">
+        <thead><tr><th style="width:40%">Asset</th><th>Count / Units</th><th>Current Price (₹)</th></tr></thead>
+        <tbody id="assetBody"></tbody>
+      </table>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s4')">← Land</button>
+        <button class="btn btn-primary" onclick="goSection('s6')">Next: Loans →</button>
+      </div>
+    </div>
+
+    <!-- Section 6: Loans -->
+    <div id="s6" class="section">
+      <div class="section-header">
+        <h2>Loans</h2>
+        <p>Up to 6 loans. Fill only the columns for loans that exist.</p>
+      </div>
+      <div id="loanTableContainer"></div>
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s5')">← Assets</button>
+        <button class="btn btn-primary" onclick="goSection('s7')">Next: MGNREGA →</button>
+      </div>
+    </div>
+
+    <!-- Section 7: MGNREGA Awareness -->
+    <div id="s7" class="section">
+      <div class="section-header">
+        <h2>Section 3 & 4: MGNREGA Awareness & Job Card</h2>
+        <p>Rights awareness, job card status, and work application history.</p>
+      </div>
+
+      <div class="subsection">Awareness of MGNREGA</div>
+      <div class="field-grid cols-2">
+        <div class="field"><label>Are you aware of MGNREGA?</label>
+          <select id="mgn_aware"><option value="">— Select —</option><option>Yes</option><option>No</option><option>Not Sure</option></select>
+        </div>
+        <div class="field"><label>How did you learn about rights?</label>
+          <select id="mgn_learn"><option value="">— Select —</option><option>Official</option><option>NGO</option><option>Community Leader</option><option>Sarpanch</option><option>Other</option></select>
+        </div>
+      </div>
+
+      <div class="subsection">Rights Awareness (tick all that apply)</div>
+      <div class="check-group">
+        <label><input type="checkbox" id="r1"> 100 Days Guaranteed Work</label>
+        <label><input type="checkbox" id="r2"> Minimum Wage Entitlement</label>
+        <label><input type="checkbox" id="r3"> Timely Payment</label>
+        <label><input type="checkbox" id="r4"> Worksite Facilities</label>
+        <label><input type="checkbox" id="r5"> Unemployment Allowance</label>
+        <label><input type="checkbox" id="r6"> Social Audits / Grievance Redressal</label>
+      </div>
+
+      <div class="subsection">Job Card</div>
+      <div class="field-grid cols-3">
+        <div class="field"><label>Applied for Job Card?</label>
+          <select id="jc_applied"><option value="">—</option><option>Yes</option><option>No</option><option>Not Sure</option></select>
+        </div>
+        <div class="field"><label>When Applied?</label><input id="jc_when" placeholder="Month / Year"></div>
+        <div class="field"><label>Got Job Card?</label>
+          <select id="jc_got"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Reason if No Job Card</label><input id="jc_reason" placeholder="Reason..."></div>
+        <div class="field"><label>Applied for Work Last Year?</label>
+          <select id="work_applied"><option value="">—</option><option>Yes</option><option>No</option><option>Not Sure</option></select>
+        </div>
+        <div class="field"><label>Method of Application</label>
+          <select id="work_method"><option value="">—</option><option>Written</option><option>Verbal</option><option>Sarpanch/Mate</option></select>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s6')">← Loans</button>
+        <button class="btn btn-primary" onclick="goSection('s8')">Next: Employment Status →</button>
+      </div>
+    </div>
+
+    <!-- Section 8: Monthly Employment -->
+    <div id="s8" class="section">
+      <div class="section-header">
+        <h2>MGNREGA Employment Status (Last Year)</h2>
+        <p>Monthly work days, wages, and whether work was provided within 15 days of demand.</p>
+      </div>
+
+      <table class="month-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Days of Work</th>
+            <th>Total Wages/Day (₹)</th>
+            <th>Amount Transferred (₹)</th>
+            <th>Work within 15 Days?</th>
+          </tr>
+        </thead>
+        <tbody id="monthBody"></tbody>
+      </table>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s7')">← Awareness</button>
+        <button class="btn btn-primary" onclick="goSection('s9')">Next: Wages & Digital →</button>
+      </div>
+    </div>
+
+    <!-- Section 9: Wages & Digital -->
+    <div id="s9" class="section">
+      <div class="section-header">
+        <h2>Section 5: Wages, Bank & Aadhaar</h2>
+        <p>Wage rates, digital financial inclusion, and Aadhaar-related issues.</p>
+      </div>
+
+      <div class="subsection">Wage Rates</div>
+      <div class="field-grid cols-3">
+        <div class="field"><label>MGNREGA Wage – Male (₹/day)</label><input id="wage_mgn_m" type="number"></div>
+        <div class="field"><label>MGNREGA Wage – Female (₹/day)</label><input id="wage_mgn_f" type="number"></div>
+        <div class="field"><label>Agri Labour Wage – Male (₹/day)</label><input id="wage_agri_m" type="number"></div>
+        <div class="field"><label>Agri Labour Wage – Female (₹/day)</label><input id="wage_agri_f" type="number"></div>
+        <div class="field"><label>Non-Agri Labour Wage – Male (₹/day)</label><input id="wage_nonagri_m" type="number"></div>
+        <div class="field"><label>Non-Agri Labour Wage – Female (₹/day)</label><input id="wage_nonagri_f" type="number"></div>
+      </div>
+
+      <div class="subsection">Bank Account</div>
+      <div class="field-grid cols-3">
+        <div class="field"><label>Bank Account?</label>
+          <select id="bank_acc"><option value="">—</option><option>Yes</option><option>No</option><option>Dormant</option></select>
+        </div>
+        <div class="field"><label>Account Type</label>
+          <select id="bank_type"><option value="">—</option><option>Jan-Dhan</option><option>Savings</option><option>Joint</option></select>
+        </div>
+        <div class="field"><label>In Whose Name?</label>
+          <select id="bank_name"><option value="">—</option><option>Self</option><option>Joint</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>ATM Card?</label>
+          <select id="atm"><option value="">—</option><option>Yes</option><option>No</option><option>Not Aware</option></select>
+        </div>
+        <div class="field"><label>Can Withdraw via ATM?</label>
+          <select id="atm_withdraw"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Who Withdraws?</label><input id="atm_who" placeholder="If not self..."></div>
+        <div class="field"><label>UPI?</label>
+          <select id="upi"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Can Send/Receive via UPI?</label>
+          <select id="upi_use"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Who Does UPI?</label><input id="upi_who" placeholder="If not self..."></div>
+      </div>
+
+      <div class="subsection">Aadhaar Issues</div>
+      <div class="field-grid cols-2">
+        <div class="field"><label>Aadhaar Card?</label>
+          <select id="aadhar"><option value="">—</option><option>Yes</option><option>No</option><option>Applied</option></select>
+        </div>
+        <div class="field"><label>Aadhaar caused delay/denial of wages?</label>
+          <select id="aadhar_delay"><option value="">—</option><option>Yes</option><option>No</option><option>Not Aware</option></select>
+        </div>
+        <div class="field"><label>Aadhaar linked to Job Card?</label>
+          <select id="aadhar_jc"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Aadhaar linked to Bank?</label>
+          <select id="aadhar_bank"><option value="">—</option><option>Yes</option><option>No</option><option>Don't Know</option></select>
+        </div>
+        <div class="field"><label>Fingerprint mismatch at bank?</label>
+          <select id="fp_mismatch"><option value="">—</option><option>Yes</option><option>No</option><option>Don't Know</option></select>
+        </div>
+        <div class="field"><label>Lost wages due to NPCI/Aadhaar errors?</label>
+          <select id="aadhar_wage_loss"><option value="">—</option><option>Yes</option><option>No</option><option>Don't Know</option></select>
+        </div>
+        <div class="field"><label>Digital attendance made wages...?</label>
+          <select id="digital_impact"><option value="">—</option><option>Easier to receive</option><option>More difficult</option><option>No Change</option></select>
+        </div>
+      </div>
+
+      <div class="subsection">Biometric Attendance</div>
+      <div class="field-grid cols-3">
+        <div class="field"><label>Biometric attendance required?</label>
+          <select id="bio_req"><option value="">—</option><option>Yes</option><option>No</option><option>Never Done</option></select>
+        </div>
+        <div class="field"><label>How many times per day?</label>
+          <select id="bio_times"><option value="">—</option><option>Once</option><option>Twice</option><option>Depends on Mate</option></select>
+        </div>
+        <div class="field"><label>Problems with biometric?</label>
+          <select id="bio_prob"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+
+      <div class="subsection">Biometric Problems (tick all that apply)</div>
+      <div class="check-group">
+        <label><input type="checkbox" id="bp1"> Fingerprint not matching</label>
+        <label><input type="checkbox" id="bp2"> Device not at worksite</label>
+        <label><input type="checkbox" id="bp3"> Machine battery/network issue</label>
+        <label><input type="checkbox" id="bp4"> Supervisor absent with device</label>
+        <label><input type="checkbox" id="bp5"> Attendance marked by someone else</label>
+        <label><input type="checkbox" id="bp6"> Face recognition not working</label>
+      </div>
+
+      <div class="subsection">If fingerprint didn't match, what happened?</div>
+      <div class="check-group">
+        <label><input type="checkbox" id="fm1"> Marked absent</label>
+        <label><input type="checkbox" id="fm2"> Waited long for retry</label>
+        <label><input type="checkbox" id="fm3"> Asked to leave without attendance</label>
+        <label><input type="checkbox" id="fm4"> Worked but no wages later</label>
+        <label><input type="checkbox" id="fm5"> Forced to sign blank paper</label>
+        <label><input type="checkbox" id="fm6"> Don't know</label>
+      </div>
+
+      <div class="field-grid cols-1" style="margin-top:16px">
+        <div class="field"><label>Bank rejection + biometric mismatch delayed wages?</label>
+          <select id="combo_delay"><option value="">—</option><option>Yes</option><option>No</option><option>Don't Know</option></select>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s8')">← Employment</button>
+        <button class="btn btn-primary" onclick="goSection('s10')">Next: Worksite & Social →</button>
+      </div>
+    </div>
+
+    <!-- Section 10: Worksite & Social -->
+    <div id="s10" class="section">
+      <div class="section-header">
+        <h2>Section 6 & 7: Worksite Experience & Social Relations</h2>
+      </div>
+
+      <div class="subsection">Worksite</div>
+      <div class="field-grid cols-2">
+        <div class="field"><label>Contractor present?</label>
+          <select id="contractor"><option value="">—</option><option>Yes</option><option>No</option><option>Sometimes</option></select>
+        </div>
+      </div>
+      <div class="subsection" style="margin-top:10px">Worksite Facilities Present</div>
+      <div class="check-group">
+        <label><input type="checkbox" id="ws_water"> Water</label>
+        <label><input type="checkbox" id="ws_firstaid"> First Aid</label>
+        <label><input type="checkbox" id="ws_creche"> Creche</label>
+      </div>
+
+      <div class="subsection">Harassment / Discrimination</div>
+      <div class="check-group">
+        <label><input type="checkbox" id="har_gender"> Gender</label>
+        <label><input type="checkbox" id="har_caste"> Caste</label>
+        <label><input type="checkbox" id="har_other"> Other</label>
+      </div>
+      <div class="field-grid cols-1" style="margin-top:12px">
+        <div class="field"><label>Elaborate reasons if harassment</label><textarea id="har_details" placeholder="Details..."></textarea></div>
+      </div>
+
+      <div class="subsection">Social Inclusion</div>
+      <div class="field-grid cols-1">
+        <div class="field"><label>Groups excluded from MGNREGA</label>
+          <div class="check-group">
+            <label><input type="checkbox" id="excl_women"> Women</label>
+            <label><input type="checkbox" id="excl_sc"> SC</label>
+            <label><input type="checkbox" id="excl_st"> ST</label>
+            <label><input type="checkbox" id="excl_landless"> Landless</label>
+            <label><input type="checkbox" id="excl_migrants"> Migrants</label>
+            <label><input type="checkbox" id="excl_others"> Others</label>
+          </div>
+        </div>
+        <div class="field"><label>Threatened for demanding work / protesting?</label>
+          <select id="threatened"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Who influences work selection?</label>
+          <div class="check-group">
+            <label><input type="checkbox" id="inf_mate"> Mate</label>
+            <label><input type="checkbox" id="inf_sarp"> Sarpanch</label>
+            <label><input type="checkbox" id="inf_cont"> Contractor</label>
+            <label><input type="checkbox" id="inf_pol"> Political Leader</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s9')">← Wages & Digital</button>
+        <button class="btn btn-primary" onclick="goSection('s11')">Next: Women & Grievances →</button>
+      </div>
+    </div>
+
+    <!-- Section 11: Women & Grievances -->
+    <div id="s11" class="section">
+      <div class="section-header">
+        <h2>Section 8 & 9: Women's Experience & Grievances</h2>
+      </div>
+
+      <div class="subsection">Women's Participation</div>
+      <div class="field-grid cols-1">
+        <div class="field"><label>Why do women participate or not participate?</label>
+          <textarea id="women_participation" placeholder="Elaborate on reasons..."></textarea>
+        </div>
+        <div class="field"><label>Women paid equally for same work?</label>
+          <select id="women_equal_pay"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Who controls women's wages?</label>
+          <select id="women_wage_control"><option value="">—</option><option>Self</option><option>Spouse</option></select>
+        </div>
+        <div class="field"><label>Childcare issues at worksites?</label>
+          <select id="childcare"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+
+      <div class="subsection">Grievance Redressal</div>
+      <div class="field-grid cols-2">
+        <div class="field"><label>Complaint filed?</label>
+          <select id="complaint"><option value="">—</option><option>Yes</option><option>No</option><option>Don't Know</option></select>
+        </div>
+        <div class="field"><label>Action taken on complaint?</label>
+          <select id="complaint_action"><option value="">—</option><option>Yes</option><option>No</option><option>Unclear</option></select>
+        </div>
+        <div class="field"><label>Aware of Social Audits?</label>
+          <select id="social_audit_aware"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="field"><label>Audit findings led to sanctions/improvement?</label>
+          <select id="audit_impact"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s10')">← Worksite & Social</button>
+        <button class="btn btn-primary" onclick="goSection('s12')">Next: Perceptions →</button>
+      </div>
+    </div>
+
+    <!-- Section 12: Perceptions -->
+    <div id="s12" class="section">
+      <div class="section-header">
+        <h2>Section 10: Perceptions & Policy Suggestions</h2>
+      </div>
+
+      <div class="subsection">Main Changes MGNREGA Brought</div>
+      <div class="check-group">
+        <label><input type="checkbox" id="ch_income"> Income</label>
+        <label><input type="checkbox" id="ch_food"> Food Security</label>
+        <label><input type="checkbox" id="ch_migration"> Migration Reduction</label>
+        <label><input type="checkbox" id="ch_debt"> Debt Reduction</label>
+        <label><input type="checkbox" id="ch_dignity"> Dignity</label>
+        <label><input type="checkbox" id="ch_none"> Not much benefit</label>
+      </div>
+
+      <div class="field-grid cols-1" style="margin-top:20px">
+        <div class="field"><label>What changes would you suggest?</label>
+          <textarea id="suggestions" placeholder="Policy suggestions from respondent..."></textarea>
+        </div>
+        <div class="field"><label>Does MGNREGA provide dignity? Explain.</label>
+          <textarea id="dignity" placeholder="Respondent's explanation..."></textarea>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <button class="btn btn-primary" onclick="goSection('s11')">← Women & Grievances</button>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-primary" onclick="saveHousehold()">💾 Save Household</button>
+          <button class="btn btn-export" onclick="exportData()">📤 Export All Data (JSON)</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================
+// DATA STORE
+// ============================
+let allHouseholds = JSON.parse(localStorage.getItem('survey_households') || '[]');
+let currentHH = null;
+let hhCounter = allHouseholds.length;
+
+function genId() {
+  hhCounter++;
+  return 'HH-' + String(hhCounter).padStart(4, '0');
+}
+
+// ============================
+// NAVIGATION
+// ============================
+const sections = ['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12'];
+
+function goSection(id) {
+  sections.forEach(s => {
+    document.getElementById(s).classList.remove('active');
+    document.getElementById('nav-' + s)?.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-' + id)?.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============================
+// REPEAT ROWS HELPERS
+// ============================
+function makeRow(containerId, countId, fields, rowData={}) {
+  const list = document.getElementById(containerId);
+  const idx = list.children.length;
+  const div = document.createElement('div');
+  div.className = 'repeat-item';
+
+  let html = `<div class="item-num"># ${idx + 1}</div><div class="field-grid cols-3">`;
+  fields.forEach(f => {
+    const val = rowData[f.key] || '';
+    if (f.type === 'select') {
+      html += `<div class="field"><label>${f.label}</label><select data-key="${f.key}">`;
+      f.options.forEach(o => html += `<option ${val===o?'selected':''}>${o}</option>`);
+      html += `</select></div>`;
+    } else {
+      html += `<div class="field"><label>${f.label}</label><input data-key="${f.key}" type="${f.type||'text'}" value="${val}" placeholder="${f.ph||''}"></div>`;
+    }
+  });
+  html += `</div><button class="btn btn-remove" style="margin-top:8px" onclick="this.parentElement.remove();updateCount('${containerId}','${countId}')">✕ Remove</button>`;
+  div.innerHTML = html;
+  list.appendChild(div);
+  updateCount(containerId, countId);
+}
+
+function updateCount(containerId, countId) {
+  const n = document.getElementById(containerId).children.length;
+  const el = document.getElementById(countId);
+  if (el) el.textContent = n + (n===1?' entry':' entries');
+  // Also update fm count
+  if (containerId === 'familyMembersList') document.getElementById('fmCount').textContent = n + ' members';
+}
+
+function getRepeatData(containerId) {
+  const rows = [];
+  document.querySelectorAll(`#${containerId} .repeat-item`).forEach(item => {
+    const row = {};
+    item.querySelectorAll('[data-key]').forEach(el => row[el.dataset.key] = el.value);
+    rows.push(row);
+  });
+  return rows;
+}
+
+function loadRepeatData(containerId, countId, addFn, data, fields) {
+  document.getElementById(containerId).innerHTML = '';
+  (data||[]).forEach(row => makeRow(containerId, countId, fields, row));
+}
+
+// ============================
+// FAMILY MEMBERS
+// ============================
+const fmFields = [
+  {key:'fm_name', label:'Name'},
+  {key:'fm_sex', label:'Sex', type:'select', options:['','Male','Female','Other']},
+  {key:'fm_age', label:'Age', type:'number'},
+  {key:'fm_relation', label:'Relation with Head'},
+  {key:'fm_marital', label:'Marital Status', type:'select', options:['','Single','Married','Widowed','Divorced']},
+  {key:'fm_primary_occ', label:'Primary Occupation'},
+  {key:'fm_secondary_occ', label:'Secondary Occupation'},
+  {key:'fm_work_place', label:'Place of Work'},
+  {key:'fm_education', label:'Level of Education'},
+  {key:'fm_years_school', label:'Years of Schooling', type:'number'},
+  {key:'fm_enrolled', label:'Enrolled in School?', type:'select', options:['','Yes','No']},
+  {key:'fm_school_place', label:'Where School?'},
+  {key:'fm_note', label:'Note'},
+];
+function addFamilyMember() { makeRow('familyMembersList','fmCount', fmFields); }
+
+// ============================
+// AGRI INCOME
+// ============================
+const aiFields = [
+  {key:'ai_name', label:'Family Member Name'},
+  {key:'ai_crop', label:'Crop'},
+  {key:'ai_work_type', label:'Type of Work (Agriculture)'},
+  {key:'ai_wage_type', label:'Type of Wage'},
+  {key:'ai_days', label:'Days of Work', type:'number'},
+  {key:'ai_cash', label:'Earned – Cash (₹)', type:'number'},
+  {key:'ai_kind', label:'Earned – Kind'},
+  {key:'ai_hours', label:'Hours of Work', type:'number'},
+];
+function addAgriIncome() { makeRow('agriIncomeList','aiCount', aiFields); }
+
+// ============================
+// NON-AGRI INCOME
+// ============================
+const labourFields = [
+  {key:'lab_name', label:'Name of Labourer'},
+  {key:'lab_type', label:'Type of Work'},
+  {key:'lab_daily_wage', label:'Daily Wage (₹)', type:'number'},
+  {key:'lab_days', label:'No. of Days', type:'number'},
+  {key:'lab_salary', label:'Total Salary (₹)', type:'number'},
+];
+function addLabourIncome() { makeRow('labourIncomeList','labourCount', labourFields); }
+
+const livestockFields = [
+  {key:'ls_animal', label:'Type of Animal'},
+  {key:'ls_count', label:'Number', type:'number'},
+  {key:'ls_mode', label:'Mode of Production'},
+  {key:'ls_total_prod', label:'Total Production'},
+  {key:'ls_total_sale', label:'Total Sale (₹)', type:'number'},
+  {key:'ls_fodder', label:'Fodder Cost (₹)', type:'number'},
+  {key:'ls_rate', label:'Rate per Unit (₹)', type:'number'},
+];
+function addLivestock() { makeRow('livestockList','livestockCount', livestockFields); }
+
+const schemeFields = [
+  {key:'sch_name', label:'Name of Scheme'},
+  {key:'sch_beneficiary', label:'Name of Beneficiary'},
+  {key:'sch_benefit', label:'Benefit Received'},
+  {key:'sch_amount', label:'Amount Last Year (₹)', type:'number'},
+];
+function addScheme() { makeRow('schemeList','schemeCount', schemeFields); }
+
+const remitFields = [
+  {key:'rem_remitter', label:'Remitter'},
+  {key:'rem_occupation', label:'Occupation'},
+  {key:'rem_place', label:'Place of Work'},
+  {key:'rem_amount', label:'Total Remittance (₹)', type:'number'},
+];
+function addRemit() { makeRow('remitList','remitCount', remitFields); }
+
+const bizFields = [
+  {key:'biz_type', label:'Type of Business'},
+  {key:'biz_location', label:'Location'},
+  {key:'biz_income', label:'Annual Income (₹)', type:'number'},
+];
+function addBiz() { makeRow('bizList','bizCount', bizFields); }
+
+// ============================
+// LAND TRANSACTIONS
+// ============================
+const landBuyFields = [
+  {key:'lb_type', label:'Type of Land'},
+  {key:'lb_area', label:'Area'},
+  {key:'lb_year', label:'Year of Buying', type:'number'},
+  {key:'lb_price', label:'Price at Time (₹)', type:'number'},
+  {key:'lb_seller', label:'Seller Name & Caste'},
+  {key:'lb_seller_occ', label:'Seller Occupation'},
+  {key:'lb_reason', label:'Reason to Buy'},
+  {key:'lb_capital', label:'Source of Capital'},
+];
+function addLandBuy() { makeRow('landBuyList','landBuyCount', landBuyFields); }
+
+const landSellFields = [
+  {key:'ls_type', label:'Type of Land'},
+  {key:'ls_area', label:'Area'},
+  {key:'ls_year', label:'Year of Selling', type:'number'},
+  {key:'ls_price', label:'Price at Time (₹)', type:'number'},
+  {key:'ls_buyer', label:'Buyer Name & Caste'},
+  {key:'ls_buyer_occ', label:'Buyer Occupation'},
+  {key:'ls_reason', label:'Reason to Sell'},
+  {key:'ls_capital', label:'Source of Capital'},
+];
+function addLandSell() { makeRow('landSellList','landSellCount', landSellFields); }
+
+// ============================
+// ASSETS
+// ============================
+const assetDefs = [
+  {cat:'Buildings', items:['House','Agricultural Building']},
+  {cat:'Animals', items:['Cattles','Calves','Oxens','Buffalows','Sheeps','Pigs','Poultry']},
+  {cat:'Agriculture Machines', items:['Nangar','Wakhar','Thresher','Khurpi','Axe','Fawda','Charkha','Tifan','Oxen Cart','Tube Well','Diesel Pump','Well','Spraying Pump','Hatodi','Other Agri']},
+  {cat:'Household Items', items:['Trunk','Sewing Machine','Watch','Gas Connection','Pressure Cooker','Cooking Utensils','Gold','Silver','Tractor','Tractor Equipment','Other Household']},
+  {cat:'Electrical', items:['Transistor/Radio','Tape Recorder','Mobile','TV','Fridge/Cooler','Mixer/Cooker','DVD/VCD/DTH','Fan','Other Electrical']},
+  {cat:'Wooden', items:['Cot','Table','Almirah','Sofa Set','Chair','Other Wooden']},
+  {cat:'Vehicles', items:['Cycle','Auto Rickshaw/Car','Two Wheeler','Bus/Truck/Tempo','Bullock Cart']},
+];
+
+function buildAssetTable() {
+  const tbody = document.getElementById('assetBody');
+  tbody.innerHTML = '';
+  assetDefs.forEach(cat => {
+    const catRow = document.createElement('tr');
+    catRow.innerHTML = `<td class="asset-cat" colspan="3">${cat.cat}</td>`;
+    tbody.appendChild(catRow);
+    cat.items.forEach(item => {
+      const key = item.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${item}</td>
+        <td><input id="ast_cnt_${key}" type="number" placeholder="Count"></td>
+        <td><input id="ast_val_${key}" type="number" placeholder="₹"></td>`;
+      tbody.appendChild(row);
+    });
+  });
+}
+
+function getAssetData() {
+  const data = {};
+  assetDefs.forEach(cat => cat.items.forEach(item => {
+    const key = item.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+    data[key] = {
+      count: document.getElementById('ast_cnt_'+key)?.value || '',
+      value: document.getElementById('ast_val_'+key)?.value || '',
+    };
+  }));
+  return data;
+}
+
+function loadAssetData(data) {
+  if (!data) return;
+  assetDefs.forEach(cat => cat.items.forEach(item => {
+    const key = item.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+    const d = data[key] || {};
+    const c = document.getElementById('ast_cnt_'+key);
+    const v = document.getElementById('ast_val_'+key);
+    if (c) c.value = d.count || '';
+    if (v) v.value = d.value || '';
+  }));
+}
+
+// ============================
+// LOANS
+// ============================
+const loanFields = ['Month & Year of Loan','Principal Amount (₹)','Mortgage?','Remaining Principal (₹)','Tax Rate (%)','Interest Given (₹)','Source of Loan','Reason for Loan'];
+
+function buildLoanTable() {
+  const container = document.getElementById('loanTableContainer');
+  let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;font-size:0.82rem">';
+  html += '<thead><tr><th style="background:var(--accent);color:white;padding:10px 12px;font-family:IBM Plex Mono,monospace;text-align:left;font-size:0.75rem;min-width:130px">Field</th>';
+  for (let i=1; i<=6; i++) html += `<th style="background:var(--accent);color:white;padding:10px 12px;font-family:IBM Plex Mono,monospace;font-size:0.75rem">Loan ${i}</th>`;
+  html += '</tr></thead><tbody>';
+  loanFields.forEach((f, fi) => {
+    html += `<tr ${fi%2===1?'style="background:var(--row-alt)"':''}>`;
+    html += `<td style="padding:8px 12px;font-weight:600;font-size:0.78rem;color:var(--muted);border-bottom:1px solid var(--border)">${f}</td>`;
+    for (let i=1; i<=6; i++) {
+      const key = `loan_${i}_f${fi}`;
+      html += `<td style="padding:6px 8px;border-bottom:1px solid var(--border)"><input id="${key}" style="width:100%;border:1.5px solid var(--border);border-radius:4px;padding:5px 6px;font-size:0.8rem;font-family:IBM Plex Sans,sans-serif"></td>`;
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+function getLoanData() {
+  const data = {};
+  for (let i=1; i<=6; i++) loanFields.forEach((f, fi) => {
+    data[`loan_${i}_f${fi}`] = document.getElementById(`loan_${i}_f${fi}`)?.value || '';
+  });
+  return data;
+}
+
+function loadLoanData(data) {
+  if (!data) return;
+  for (let i=1; i<=6; i++) loanFields.forEach((f, fi) => {
+    const el = document.getElementById(`loan_${i}_f${fi}`);
+    if (el) el.value = data[`loan_${i}_f${fi}`] || '';
+  });
+}
+
+// ============================
+// MONTHLY TABLE
+// ============================
+const months = ['December 2024','January 2025','February 2025','March 2025','April 2025','May 2025','June 2025','July 2025','August 2025','September 2025','October 2025','November 2025'];
+
+function buildMonthTable() {
+  const tbody = document.getElementById('monthBody');
+  tbody.innerHTML = '';
+  months.forEach((m, i) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${m}</td>
+      <td><input id="m_days_${i}" type="number" placeholder="Days"></td>
+      <td><input id="m_wage_${i}" type="number" placeholder="₹/day"></td>
+      <td><input id="m_transfer_${i}" type="number" placeholder="₹"></td>
+      <td><select id="m_15d_${i}"><option value="">—</option><option>Yes</option><option>No</option><option>NA</option></select></td>`;
+    tbody.appendChild(row);
+  });
+}
+
+function getMonthData() {
+  return months.map((m, i) => ({
+    month: m,
+    days: document.getElementById(`m_days_${i}`)?.value || '',
+    wage: document.getElementById(`m_wage_${i}`)?.value || '',
+    transfer: document.getElementById(`m_transfer_${i}`)?.value || '',
+    within15: document.getElementById(`m_15d_${i}`)?.value || '',
+  }));
+}
+
+function loadMonthData(data) {
+  (data||[]).forEach((row, i) => {
+    const d = document.getElementById(`m_days_${i}`); if(d) d.value = row.days||'';
+    const w = document.getElementById(`m_wage_${i}`); if(w) w.value = row.wage||'';
+    const t = document.getElementById(`m_transfer_${i}`); if(t) t.value = row.transfer||'';
+    const f = document.getElementById(`m_15d_${i}`); if(f) f.value = row.within15||'';
+  });
+}
+
+// ============================
+// SAVE / LOAD
+// ============================
+function getFieldVal(id) { return document.getElementById(id)?.value || ''; }
+function setFieldVal(id, val) { const el = document.getElementById(id); if(el) el.value = val||''; }
+function getCheckVal(id) { return document.getElementById(id)?.checked || false; }
+function setCheckVal(id, val) { const el = document.getElementById(id); if(el) el.checked = !!val; }
+
+const simpleFields = [
+  'village','block','district','survey_date','native_place','year_migration',
+  'job_card_no',
+  'head_name','head_sex','head_age','address','head_occupation','religion','caste','reasons_migration',
+  'mgn_aware','mgn_learn','jc_applied','jc_when','jc_got','jc_reason','work_applied','work_method',
+  'wage_mgn_m','wage_mgn_f','wage_agri_m','wage_agri_f','wage_nonagri_m','wage_nonagri_f',
+  'bank_acc','bank_type','bank_name','atm','atm_withdraw','atm_who','upi','upi_use','upi_who',
+  'aadhar','aadhar_delay','aadhar_jc','aadhar_bank','fp_mismatch','aadhar_wage_loss','digital_impact',
+  'bio_req','bio_times','bio_prob','combo_delay',
+  'contractor','har_details','threatened',
+  'land_irr_area','land_irr_val','land_irr_taken_till','land_irr_taken_mort','land_irr_give_till','land_irr_give_mort','land_irr_water',
+  'land_rain_area','land_rain_val','land_rain_taken_till','land_rain_taken_mort','land_rain_give_till','land_rain_give_mort','land_rain_water',
+  'land_fall_area','land_fall_val','land_fall_taken_till','land_fall_taken_mort','land_fall_give_till','land_fall_give_mort','land_fall_water',
+  'women_participation','women_equal_pay','women_wage_control','childcare',
+  'complaint','complaint_action','social_audit_aware','audit_impact',
+  'suggestions','dignity',
+];
+
+const checkboxIds = [
+  'r1','r2','r3','r4','r5','r6',
+  'bp1','bp2','bp3','bp4','bp5','bp6',
+  'fm1','fm2','fm3','fm4','fm5','fm6',
+  'ws_water','ws_firstaid','ws_creche',
+  'har_gender','har_caste','har_other',
+  'excl_women','excl_sc','excl_st','excl_landless','excl_migrants','excl_others',
+  'inf_mate','inf_sarp','inf_cont','inf_pol',
+  'ch_income','ch_food','ch_migration','ch_debt','ch_dignity','ch_none',
+];
+
+function saveHousehold() {
+  const hh = {
+    id: currentHH?.id || genId(),
+    saved_at: new Date().toISOString(),
+    general: {},
+    family_members: getRepeatData('familyMembersList'),
+    agri_income: getRepeatData('agriIncomeList'),
+    labour_income: getRepeatData('labourIncomeList'),
+    livestock: getRepeatData('livestockList'),
+    schemes: getRepeatData('schemeList'),
+    remittances: getRepeatData('remitList'),
+    businesses: getRepeatData('bizList'),
+    land_buy: getRepeatData('landBuyList'),
+    land_sell: getRepeatData('landSellList'),
+    assets: getAssetData(),
+    loans: getLoanData(),
+    monthly_employment: getMonthData(),
+    checkboxes: {},
+  };
+
+  simpleFields.forEach(f => hh.general[f] = getFieldVal(f));
+  checkboxIds.forEach(id => hh.checkboxes[id] = getCheckVal(id));
+
+  // Save/update
+  const idx = allHouseholds.findIndex(h => h.id === hh.id);
+  if (idx >= 0) allHouseholds[idx] = hh;
+  else allHouseholds.push(hh);
+
+  currentHH = hh;
+  localStorage.setItem('survey_households', JSON.stringify(allHouseholds));
+  document.getElementById('hhIdDisplay').textContent = hh.id;
+  document.getElementById('hhLabel').textContent = `HH: ${hh.id} | ${hh.general.head_name || 'Unnamed'} | ${hh.general.village || '—'}`;
+  showToast('✓ Household saved: ' + hh.id);
+}
+
+function newHousehold() {
+  if (!confirm('Start a new household? Current data will be saved first.')) return;
+  saveHousehold();
+  currentHH = null;
+  // Clear all
+  simpleFields.forEach(f => setFieldVal(f, ''));
+  checkboxIds.forEach(id => setCheckVal(id, false));
+  document.getElementById('familyMembersList').innerHTML = '';
+  document.getElementById('agriIncomeList').innerHTML = '';
+  document.getElementById('labourIncomeList').innerHTML = '';
+  document.getElementById('livestockList').innerHTML = '';
+  document.getElementById('schemeList').innerHTML = '';
+  document.getElementById('remitList').innerHTML = '';
+  document.getElementById('bizList').innerHTML = '';
+  document.getElementById('landBuyList').innerHTML = '';
+  document.getElementById('landSellList').innerHTML = '';
+  buildAssetTable();
+  buildLoanTable();
+  buildMonthTable();
+  const newId = genId();
+  document.getElementById('hhIdDisplay').textContent = newId;
+  document.getElementById('hhLabel').textContent = 'New household – not saved yet';
+  currentHH = { id: newId };
+  goSection('s0');
+  showToast('New household started: ' + newId);
+}
+
+function showLoaded() {
+  if (allHouseholds.length === 0) { showToast('No households saved yet.'); return; }
+  const list = allHouseholds.map((h,i) => `${i+1}. ${h.id} — ${h.general?.head_name||'Unnamed'} — ${h.general?.village||'No village'} (${h.general?.survey_date||'No date'})`).join('\n');
+  alert('Saved Households:\n\n' + list + '\n\nNote: To load a specific household, use the exported JSON or refresh the page — the latest household is auto-loaded.');
+}
+
+function exportData() {
+  saveHousehold();
+  const blob = new Blob([JSON.stringify(allHouseholds, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `survey_data_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('Exported all ' + allHouseholds.length + ' household(s)');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================
+// INIT
+// ============================
+document.addEventListener('DOMContentLoaded', () => {
+  buildAssetTable();
+  buildLoanTable();
+  buildMonthTable();
+
+  // Auto-load last household if exists
+  if (allHouseholds.length > 0) {
+    const hh = allHouseholds[allHouseholds.length - 1];
+    currentHH = hh;
+    simpleFields.forEach(f => setFieldVal(f, hh.general?.[f]));
+    checkboxIds.forEach(id => setCheckVal(id, hh.checkboxes?.[id]));
+
+    loadRepeatData('familyMembersList','fmCount', addFamilyMember, hh.family_members, fmFields);
+    loadRepeatData('agriIncomeList','aiCount', addAgriIncome, hh.agri_income, aiFields);
+    loadRepeatData('labourIncomeList','labourCount', addLabourIncome, hh.labour_income, labourFields);
+    loadRepeatData('livestockList','livestockCount', addLivestock, hh.livestock, livestockFields);
+    loadRepeatData('schemeList','schemeCount', addScheme, hh.schemes, schemeFields);
+    loadRepeatData('remitList','remitCount', addRemit, hh.remittances, remitFields);
+    loadRepeatData('bizList','bizCount', addBiz, hh.businesses, bizFields);
+    loadRepeatData('landBuyList','landBuyCount', addLandBuy, hh.land_buy, landBuyFields);
+    loadRepeatData('landSellList','landSellCount', addLandSell, hh.land_sell, landSellFields);
+    loadAssetData(hh.assets);
+    loadLoanData(hh.loans);
+    loadMonthData(hh.monthly_employment);
+
+    document.getElementById('hhIdDisplay').textContent = hh.id;
+    document.getElementById('hhLabel').textContent = `HH: ${hh.id} | ${hh.general?.head_name || 'Unnamed'} | ${hh.general?.village || '—'}`;
+  } else {
+    currentHH = { id: genId() };
+    document.getElementById('hhIdDisplay').textContent = currentHH.id;
+  }
+});
+</script>
+</body>
+</html>
